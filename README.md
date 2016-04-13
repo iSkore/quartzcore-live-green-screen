@@ -4,28 +4,26 @@ Live streaming video of chroma key green screen cut out
 <img src="https://s3.amazonaws.com/cerenity/SOResources/greenscreen.png" width="400" height="400" alt="green screen" />
 
 
-### `darkToTransparent sample`
+### `greenScreen sample`
 
 With green image billboard layering, cancel out images based on layer position
 
 A Core Image kernel routine that computes a multiply effect.
 The code looks up the source pixel in the sampler and then multiplies it by the value passed to the routine.
 
-	kernel vec4 darkToTransparent(sampler image)
+	kernel vec4 greenScreen( sampler image, __number select )
 	{
 		vec4 color = sample( image, samplerCoord( image ) );
-
-		color.a = ( color.r + color.g + color.b ) > 0.001 ? 1.0 : 0.0;
-		color.r = 0.0;
-		color.g = 1.0;
-		color.b = 0.0;
-
-		return color;
-	}
-
-	kernel vec4 coreImageKernel( sampler image ) {
-		vec4 color = sample( image, samplerCoord( image ) );
-
+		
+		// HIGHLY SELECTIVE
+		color.a = ( color.g <= 0.35 && color.g >= 0.2 && color.r <= 0.2 && color.b <= 0.275 && color.b >= 0.05 ) ? 0.0 : 1.0;
+		
+		// MID SELECTIVE
+		color.a = ( color.r <= 0.175 && color.g <= 0.35 && color.g >= 0.15 && color.b <= 0.25 && color.b >= 0.05 ) ? 0.0 : 1.0;
+		
+		// LESS SELECTIVE
+		color.a = ( color.r <= 0.155 && color.r >= 0.0 && color.g <= 0.35 && color.g >= 0.135 && color.b <= 0.2175 && color.b >= 0.0375 ) ? 0.0 : 1.0;
+		
 		return color;
 	}
 
@@ -142,5 +140,68 @@ Example of the "main" function associated to the first kernel in the
 kernel window and current parameters has been generated below:
 
 	function __image main(__image image) {
-		return darkToTransparent.apply( image.definition, null, image );
+		return greenScreen.apply( image.definition, null, image );
 	}
+
+### Green screen averaging and selecting
+
+ - **AVERAGES**
+     - FULL RGB
+         - `r = 80`
+         - `g = 142`
+         - `b = 108`
+     - Cocoa traslation
+         - `r = 0.31372549`
+         - `g = 0.55686275`
+         - `b = 0.07058824`
+
+ - **Highly selective**
+     - **RED:** `x ≤ 0.2`
+     - **GREEN:** `0.2 ≤ x ≤ 0.35`
+     - **BLUE:** `0.05 ≤ x ≤ 0.275`
+
+ - **Mid selective**
+     - **RED:** `x ≤ 0.175`
+     - **GREEN:** `0.15 ≤ x ≤ 0.35`
+     - **BLUE:** `0.05 ≤ x ≤ 0.25`
+
+ - **Low selective**
+     - **RED:** `x ≤ 0.155`
+     - **GREEN:** `0.135 ≤ x ≤ 0.35`
+     - **BLUE:** `0.0375 ≤ x ≤ 0.2175`
+
+### ASCII Reactivity
+
+ - Audio Input
+     - Speaking sensitivity
+         - `Audio Input`
+             - Input Params
+                 - Increasing Scale: `1`
+                 - Decreasing Scale: `0.25`
+         - `JavaScript`
+             - Output: `0.5 - inputNumber`
+
+     - Classroom sensitivity:
+         - `Audio Input`
+             - Input Params
+                 - Increasing Scale: `1.5`
+                 - Decreasing Scale: `0.5`
+         - `JavaScript`
+             - Output: `1.0 - inputNumber`
+
+     - Jet engine sensitivity:
+         - `Audio Input`
+		     - Input Params
+		         - Increasing Scale: `5`
+		         - Decreasing Scale: `2.5`
+         - `JavaScript`
+             - Output: `5.0 - inputNumber`
+
+
+
+
+
+>To do:
+
+	VideoInput => ASCII w/audio in (0.322) => Billboard
+	Host Info => CPU Load => Image W/ String => Billboard
