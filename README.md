@@ -155,17 +155,17 @@ kernel window and current parameters has been generated below:
          - `g = 0.55686275`
          - `b = 0.07058824`
 
- - **Highly selective**
+ - **High level selectivity**
      - **RED:** `x ≤ 0.2`
      - **GREEN:** `0.2 ≤ x ≤ 0.35`
      - **BLUE:** `0.05 ≤ x ≤ 0.275`
 
- - **Mid selective**
+ - **Mid level selectivity**
      - **RED:** `x ≤ 0.175`
      - **GREEN:** `0.15 ≤ x ≤ 0.35`
      - **BLUE:** `0.05 ≤ x ≤ 0.25`
 
- - **Low selective**
+ - **Low level selectivity**
      - **RED:** `x ≤ 0.155`
      - **GREEN:** `0.135 ≤ x ≤ 0.35`
      - **BLUE:** `0.0375 ≤ x ≤ 0.2175`
